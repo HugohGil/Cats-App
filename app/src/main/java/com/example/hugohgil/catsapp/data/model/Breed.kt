@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 @Entity
 data class Breed(
     @PrimaryKey val id: String,
-    val name: String?,
+    val name: String,
     val origin: String?,
     val temperament: String?,
     val description: String?,

@@ -16,9 +16,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.room.Room
 import com.example.hugohgil.catsapp.data.BreedRepository
+import com.example.hugohgil.catsapp.data.database.BreedDatabase
 import com.example.hugohgil.catsapp.data.retrofitapi.BreedRetrofitApiInstance
 import com.example.hugohgil.catsapp.data.retrofitapi.BreedRetrofitApiInterface
-import com.example.hugohgil.catsapp.data.database.BreedDatabase
 import com.example.hugohgil.catsapp.ui.breedlist.BreedListScreen
 import com.example.hugohgil.catsapp.ui.breedlist.BreedListViewModel
 import com.example.hugohgil.catsapp.ui.breedlist.BreedListViewModelFactory
@@ -30,6 +30,7 @@ object BreedList
 
 @Serializable
 data class BreedDetails(val breedId: String)
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,25 +46,34 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CatsApp() {
+    val context = LocalContext.current
     val navController = rememberNavController()
+
     val breedRetrofitApi =
         BreedRetrofitApiInstance.getInstance().create(BreedRetrofitApiInterface::class.java)
-    val context = LocalContext.current
-    val breedDao = Room.databaseBuilder(
+    val breedDatabase = Room.databaseBuilder(
         context,
         BreedDatabase::class.java,
         "database-breeds"
-    ).build().breedDao()
-    val breedRepository = BreedRepository(breedRetrofitApi, breedDao)
+    ).build()
+
+    val breedRepository = BreedRepository(
+        breedRetrofitApi = breedRetrofitApi,
+        breedDatabase = breedDatabase
+    )
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        NavHost(navController = navController, startDestination = BreedList) {
+        NavHost(
+            navController = navController,
+            startDestination = BreedList
+        ) {
             composable<BreedList> {
-                val viewModel: BreedListViewModel = viewModel(
+                val breedListViewModel: BreedListViewModel = viewModel(
                     factory = BreedListViewModelFactory(breedRepository)
                 )
+
                 BreedListScreen(
-                    viewModel = viewModel,
+                    breedListViewModel = breedListViewModel,
                     contentPadding = innerPadding,
                     onNavigateToBreedDetails = { breedId ->
                         navController.navigate(BreedDetails(breedId))
