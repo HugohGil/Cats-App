@@ -35,9 +35,6 @@ class BreedRemoteMediator(
             )
 
             breedDatabase.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    breedDatabase.breedDao().deleteAll()
-                }
                 breedDatabase.breedDao().insertAll(breeds)
             }
 

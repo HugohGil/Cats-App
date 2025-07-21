@@ -1,4 +1,4 @@
-package com.example.hugohgil.catsapp.ui.breedlist
+package com.example.hugohgil.catsapp.ui.breedfavouritelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,16 +7,15 @@ import com.example.hugohgil.catsapp.data.BreedRepository
 import com.example.hugohgil.catsapp.data.model.Breed
 import kotlinx.coroutines.launch
 
-class BreedListViewModel(
+class BreedFavouriteListViewModel(
     private val breedRepository: BreedRepository
 ) : ViewModel() {
-    val breeds = breedRepository.getBreeds().cachedIn(viewModelScope)
+    val breedsFavourite = breedRepository.getFavouriteBreeds().cachedIn(viewModelScope)
 
     fun toggleFavorite(breed: Breed) {
         viewModelScope.launch {
-            val updatedBreed = breed.copy(isFavorite = !breed.isFavorite)
-
-            breedRepository.updateBreed(breed = updatedBreed)
+            val updated = breed.copy(isFavorite = !breed.isFavorite)
+            breedRepository.updateBreed(updated)
         }
     }
 }
