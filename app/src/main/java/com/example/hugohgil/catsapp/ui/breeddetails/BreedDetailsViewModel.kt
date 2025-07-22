@@ -20,4 +20,13 @@ class BreedDetailsViewModel(
             _breed.value = breedRepository.getBreed(breedId)
         }
     }
+
+    fun toggleFavorite(breed: Breed) {
+        viewModelScope.launch {
+            val updatedBreed = breed.copy(isFavorite = !breed.isFavorite)
+
+            breedRepository.updateBreed(breed = updatedBreed)
+            _breed.value = updatedBreed
+        }
+    }
 }
