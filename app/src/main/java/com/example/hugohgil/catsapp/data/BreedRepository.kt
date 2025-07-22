@@ -9,16 +9,16 @@ import com.example.hugohgil.catsapp.data.model.Breed
 import com.example.hugohgil.catsapp.data.retrofitapi.BreedRetrofitApiInterface
 import kotlinx.coroutines.flow.Flow
 
-class BreedRepository(
+open class BreedRepository(
     private val breedRetrofitApi: BreedRetrofitApiInterface,
     private val breedDatabase: BreedDatabase
 ) {
-    suspend fun updateBreed(breed: Breed) {
+    open suspend fun updateBreed(breed: Breed) {
         breedDatabase.breedDao().updateBreed(breed)
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getBreeds(): Flow<PagingData<Breed>> {
+    open fun getBreeds(): Flow<PagingData<Breed>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
             remoteMediator = BreedRemoteMediator(
@@ -29,14 +29,14 @@ class BreedRepository(
         ).flow
     }
 
-    fun getFavouriteBreeds(): Flow<PagingData<Breed>> {
+    open fun getFavouriteBreeds(): Flow<PagingData<Breed>> {
         return Pager(
             config = PagingConfig(pageSize = 12),
             pagingSourceFactory = { breedDatabase.breedDao().getFavouriteBreeds() }
         ).flow
     }
 
-    suspend fun getBreed(id: String): Breed {
+    open suspend fun getBreed(id: String): Breed {
         return breedDatabase.breedDao().getBreed(id)
     }
 }
