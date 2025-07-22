@@ -32,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
+import com.example.hugohgil.catsapp.R
 import com.example.hugohgil.catsapp.data.model.Breed
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +65,7 @@ fun BreedListScreen(
                 onSearch = { active = false },
                 active = active,
                 onActiveChange = { active = it },
-                placeholder = { Text("Search Breeds") },
+                placeholder = { Text(stringResource(R.string.search_breeds)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -138,7 +140,7 @@ fun BreedGrid(
                     loadState.append is LoadState.Error -> {
                         item {
                             Text(
-                                text = "Error loading more items",
+                                text = stringResource(R.string.error_loading_more),
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -171,7 +173,7 @@ fun BreedItem(
             ) {
                 AsyncImage(
                     model = breed.imageUrl,
-                    contentDescription = "Cat Breed",
+                    contentDescription = stringResource(R.string.cat_breed),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -187,7 +189,7 @@ fun BreedItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.favourite),
                         tint = if (breed.isFavorite) Color.Yellow else Color.Gray
                     )
                 }
@@ -210,7 +212,10 @@ fun BreedItem(
 
                     if (isFavouriteListScreen) {
                         Text(
-                            "Life Span: ${breed.lifeSpan?.split(" ")?.firstOrNull() ?: "Not Available"}",
+                            stringResource(
+                                R.string.life_span,
+                                breed.lifeSpan?.split(" ")?.firstOrNull() ?: stringResource(R.string.not_available)
+                            ),
                             style = MaterialTheme.typography.labelLarge,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(8.dp)

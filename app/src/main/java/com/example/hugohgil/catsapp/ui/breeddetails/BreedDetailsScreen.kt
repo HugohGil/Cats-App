@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.hugohgil.catsapp.R
 
 @Composable
 fun BreedDetailsScreen(
@@ -58,7 +60,7 @@ fun BreedDetailsScreen(
             ) {
                 AsyncImage(
                     model = breed!!.imageUrl,
-                    contentDescription = "Cat Breed",
+                    contentDescription = stringResource(R.string.cat_breed),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -75,7 +77,7 @@ fun BreedDetailsScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.favourite),
                         tint = if (breed!!.isFavorite) Color.Yellow else Color.Gray
                     )
                 }
@@ -85,21 +87,27 @@ fun BreedDetailsScreen(
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = "Origin: ${breed!!.origin ?: "Not Available"}",
+                text = stringResource(
+                    R.string.origin,
+                    breed!!.origin ?: stringResource(R.string.not_available)
+                ),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Temperament: ${breed!!.temperament ?: "Not Available"}",
+                text = stringResource(
+                    R.string.temperament,
+                    breed!!.temperament ?: stringResource(R.string.not_available)
+                ),
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                text = breed!!.description ?: "No description available",
+                text = breed!!.description ?: stringResource(R.string.no_description),
                 style = MaterialTheme.typography.bodyLarge
             )
         }

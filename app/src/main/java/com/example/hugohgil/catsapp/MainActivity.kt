@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -92,42 +93,40 @@ fun CatsApp() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (currentRoute == breedListRoute || currentRoute == breedFavouriteListRoute) {
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(Color.Black)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .background(Color.Black)
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(enabled = currentRoute != breedListRoute) {
+                            navController.navigate(BreedList)
+                        }
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clickable(enabled = currentRoute != breedListRoute) {
-                                navController.navigate(BreedList)
-                            }
-                    ) {
-                        Text(
-                            text = "Cats List",
-                            color = Color.White
-                        )
-                    }
+                    Text(
+                        text = stringResource(R.string.cats_list),
+                        color = Color.White
+                    )
+                }
 
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight()
-                            .clickable(enabled = currentRoute != breedFavouriteListRoute) {
-                                navController.navigate(BreedFavouriteList)
-                            }
-                    ) {
-                        Text(
-                            text = "Favourites",
-                            color = Color.White
-                        )
-                    }
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(enabled = currentRoute != breedFavouriteListRoute) {
+                            navController.navigate(BreedFavouriteList)
+                        }
+                ) {
+                    Text(
+                        text = stringResource(R.string.favourites),
+                        color = Color.White
+                    )
                 }
             }
         }
