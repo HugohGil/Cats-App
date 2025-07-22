@@ -39,8 +39,6 @@ fun BreedDetailsScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            val imageUrl = breed!!.imageId?.let { "https://cdn2.thecatapi.com/images/$it.jpg" }
-
             Text(
                 text = breed!!.name,
                 style = MaterialTheme.typography.headlineMedium
@@ -49,7 +47,7 @@ fun BreedDetailsScreen(
             Spacer(Modifier.height(16.dp))
 
             AsyncImage(
-                model = imageUrl,
+                model = breed!!.imageUrl,
                 contentDescription = "Cat Breed",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

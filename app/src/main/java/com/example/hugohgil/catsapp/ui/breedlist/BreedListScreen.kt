@@ -166,13 +166,11 @@ fun BreedItem(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            val imageUrl = breed.imageId?.let { "https://cdn2.thecatapi.com/images/$it.jpg" }
-
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 AsyncImage(
-                    model = imageUrl,
+                    model = breed.imageUrl,
                     contentDescription = "Cat Breed",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

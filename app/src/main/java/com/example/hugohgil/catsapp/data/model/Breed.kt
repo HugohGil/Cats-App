@@ -13,5 +13,6 @@ data class Breed(
     val description: String?,
     @SerializedName("life_span") val lifeSpan: String?,
     @SerializedName("reference_image_id") val imageId: String?,
+    val imageUrl: String? = null,
     val isFavorite: Boolean = false
 )

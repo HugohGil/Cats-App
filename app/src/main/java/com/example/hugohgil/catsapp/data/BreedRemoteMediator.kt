@@ -14,7 +14,6 @@ class BreedRemoteMediator(
     private val breedRetrofitApi: BreedRetrofitApiInterface,
     private val breedDatabase: BreedDatabase
 ) : RemoteMediator<Int, Breed>() {
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Breed>
@@ -34,8 +33,18 @@ class BreedRemoteMediator(
                 page = page
             )
 
+            val breedsWithImage = breeds.map { breed ->
+                if (breed.imageId != null) {
+                    val breedImage = breedRetrofitApi.getBreedImage(breed.imageId)
+
+                    breed.copy(imageUrl = breedImage.url)
+                } else {
+                    breed
+                }
+            }
+
             breedDatabase.withTransaction {
-                breedDatabase.breedDao().insertAll(breeds)
+                breedDatabase.breedDao().insertAll(breedsWithImage)
             }
 
             MediatorResult.Success(endOfPaginationReached = breeds.isEmpty())
