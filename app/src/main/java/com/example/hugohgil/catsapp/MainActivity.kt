@@ -145,7 +145,7 @@ fun CatsApp() {
                 BreedListScreen(
                     breeds = breeds,
                     contentPadding = innerPadding,
-                    showLifespan = false,
+                    isFavouriteListScreen = false,
                     onNavigateToBreedDetails = { breedId ->
                         navController.navigate(BreedDetails(breedId))
                     },
@@ -164,7 +164,7 @@ fun CatsApp() {
                 BreedListScreen(
                     breeds = favouriteBreeds,
                     contentPadding = innerPadding,
-                    showLifespan = true,
+                    isFavouriteListScreen = true,
                     onNavigateToBreedDetails = { breedId ->
                         navController.navigate(BreedDetails(breedId))
                     },

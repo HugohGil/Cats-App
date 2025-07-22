@@ -17,11 +17,17 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,11 +39,68 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import com.example.hugohgil.catsapp.data.model.Breed
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BreedListScreen(
     breeds: LazyPagingItems<Breed>,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    showLifespan: Boolean,
+    isFavouriteListScreen: Boolean,
+    onNavigateToBreedDetails: (String) -> Unit,
+    onToggleFavorite: (Breed) -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
+
+    val filteredBreeds = breeds.itemSnapshotList.items.filter {
+        it.name.contains(searchQuery, ignoreCase = true)
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (!isFavouriteListScreen) {
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = { searchQuery = it },
+                onSearch = { active = false },
+                active = active,
+                onActiveChange = { active = it },
+                placeholder = { Text("Search Breeds") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                BreedGrid(
+                    breeds = breeds,
+                    filteredBreeds = filteredBreeds,
+                    searchQuery = searchQuery,
+                    isFavouriteListScreen = isFavouriteListScreen,
+                    contentPadding = contentPadding,
+                    onNavigateToBreedDetails = onNavigateToBreedDetails,
+                    onToggleFavorite = onToggleFavorite
+                )
+            }
+        }
+
+        if (!active) {
+            BreedGrid(
+                breeds = breeds,
+                filteredBreeds = filteredBreeds,
+                searchQuery = searchQuery,
+                isFavouriteListScreen = isFavouriteListScreen,
+                contentPadding = contentPadding,
+                onNavigateToBreedDetails = onNavigateToBreedDetails,
+                onToggleFavorite = onToggleFavorite
+            )
+        }
+    }
+}
+
+@Composable
+fun BreedGrid(
+    breeds: LazyPagingItems<Breed>,
+    filteredBreeds: List<Breed>,
+    searchQuery: String,
+    isFavouriteListScreen: Boolean,
+    contentPadding: PaddingValues,
     onNavigateToBreedDetails: (String) -> Unit,
     onToggleFavorite: (Breed) -> Unit
 ) {
@@ -46,34 +109,39 @@ fun BreedListScreen(
         contentPadding = contentPadding,
         modifier = Modifier.fillMaxSize()
     ) {
-        items(breeds.itemCount) { index ->
-            val breed = breeds[index]
+        items(filteredBreeds.size) { index ->
+            val breed = filteredBreeds[index]
 
-            if (breed != null) {
-                BreedItem(
-                    breed = breed,
-                    showLifespan = showLifespan,
-                    onClick = { onNavigateToBreedDetails(breed.id) },
-                    onToggleFavorite = {onToggleFavorite(breed)}
-                )
-            }
+            BreedItem(
+                breed = breed,
+                isFavouriteListScreen = isFavouriteListScreen,
+                onClick = { onNavigateToBreedDetails(breed.id) },
+                onToggleFavorite = { onToggleFavorite(breed) }
+            )
         }
 
-        breeds.apply {
-            when {
-                loadState.refresh is LoadState.Loading -> {
-                    item {
-                        CircularProgressIndicator()
+        if (searchQuery.isEmpty()) {
+            breeds.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                loadState.append is LoadState.Loading -> {
-                    item {
-                        CircularProgressIndicator()
+
+                    loadState.append is LoadState.Loading -> {
+                        item {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                loadState.append is LoadState.Error -> {
-                    item {
-                        Text(text = "Error loading more items", textAlign = TextAlign.Center)
+
+                    loadState.append is LoadState.Error -> {
+                        item {
+                            Text(
+                                text = "Error loading more items",
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }
@@ -84,7 +152,7 @@ fun BreedListScreen(
 @Composable
 fun BreedItem(
     breed: Breed,
-    showLifespan: Boolean,
+    isFavouriteListScreen: Boolean,
     onClick: () -> Unit,
     onToggleFavorite: () -> Unit
 ) {
@@ -131,7 +199,7 @@ fun BreedItem(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(if (showLifespan) 100.dp else 60.dp)
+                    .height(if (isFavouriteListScreen) 100.dp else 60.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -142,7 +210,7 @@ fun BreedItem(
                         modifier = Modifier.padding(8.dp)
                     )
 
-                    if (showLifespan) {
+                    if (isFavouriteListScreen) {
                         Text(
                             "Life Span: ${breed.lifeSpan?.split(" ")?.firstOrNull() ?: "Not Available"}",
                             style = MaterialTheme.typography.labelLarge,
