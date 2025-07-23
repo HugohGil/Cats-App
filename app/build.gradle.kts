@@ -44,6 +44,8 @@ android {
 dependencies {
     testImplementation (libs.junit)
     testImplementation (libs.kotlinx.coroutines.test)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.coil.compose)

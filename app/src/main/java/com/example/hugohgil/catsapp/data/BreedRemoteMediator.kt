@@ -8,6 +8,9 @@ import androidx.room.withTransaction
 import com.example.hugohgil.catsapp.data.database.BreedDatabase
 import com.example.hugohgil.catsapp.data.model.Breed
 import com.example.hugohgil.catsapp.data.retrofitapi.BreedRetrofitApiInterface
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 @OptIn(ExperimentalPagingApi::class)
 class BreedRemoteMediator(
@@ -33,15 +36,19 @@ class BreedRemoteMediator(
                 page = page
             )
 
-            val breedsWithImage = breeds.map { breed ->
-                if (breed.imageId != null) {
-                    val breedImage = breedRetrofitApi.getBreedImage(breed.imageId)
+            val breedsWithImage = coroutineScope {
+                breeds.map { breed ->
+                    async {
+                        if (breed.imageId != null) {
+                            val breedImage = breedRetrofitApi.getBreedImage(breed.imageId)
 
-                    breed.copy(imageUrl = breedImage.url)
-                } else {
-                    breed
+                            breed.copy(imageUrl = breedImage.url)
+                        } else {
+                            breed
+                        }
+                    }
                 }
-            }
+            }.awaitAll()
 
             breedDatabase.withTransaction {
                 breedDatabase.breedDao().insertAll(breedsWithImage)

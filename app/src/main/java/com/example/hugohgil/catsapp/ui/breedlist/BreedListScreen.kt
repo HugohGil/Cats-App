@@ -52,9 +52,14 @@ fun BreedListScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+    val isSearching = searchQuery.isNotEmpty()
 
-    val filteredBreeds = breeds.itemSnapshotList.items.filter {
-        it.name.contains(searchQuery, ignoreCase = true)
+    val filteredBreeds = if (isSearching) {
+        breeds.itemSnapshotList.items.filter {
+            it.name.contains(searchQuery, ignoreCase = true)
+        }
+    } else {
+        emptyList()
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -111,18 +116,29 @@ fun BreedGrid(
         contentPadding = contentPadding,
         modifier = Modifier.fillMaxSize()
     ) {
-        items(filteredBreeds.size) { index ->
-            val breed = filteredBreeds[index]
+        if (searchQuery.isNotEmpty()) {
+            items(filteredBreeds.size) { index ->
+                val breed = filteredBreeds[index]
 
-            BreedItem(
-                breed = breed,
-                isFavouriteListScreen = isFavouriteListScreen,
-                onClick = { onNavigateToBreedDetails(breed.id) },
-                onToggleFavorite = { onToggleFavorite(breed) }
-            )
-        }
+                BreedItem(
+                    breed = breed,
+                    isFavouriteListScreen = isFavouriteListScreen,
+                    onClick = { onNavigateToBreedDetails(breed.id) },
+                    onToggleFavorite = { onToggleFavorite(breed) }
+                )
+            }
+        } else {
+            items(breeds.itemCount) { index ->
+                breeds[index]?.let { breed ->
+                    BreedItem(
+                        breed = breed,
+                        isFavouriteListScreen = isFavouriteListScreen,
+                        onClick = { onNavigateToBreedDetails(breed.id) },
+                        onToggleFavorite = { onToggleFavorite(breed) }
+                    )
+                }
+            }
 
-        if (searchQuery.isEmpty()) {
             breeds.apply {
                 when {
                     loadState.refresh is LoadState.Loading -> {
