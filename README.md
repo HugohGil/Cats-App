@@ -1,5 +1,3 @@
-Project made for a code challenge.
-
 Strategies decided during development:
 
 I used Retrofit for fetching the data from the Cat API and Paging 3 to implement the pagination of the data.
